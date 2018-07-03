@@ -94,7 +94,11 @@ class BP_Featured_Member_Addon {
 
 		$interval = apply_filters( 'bp_fma_remove_interval', ( 7 * 24 * 60 * 60 ) );
 
-		$query = $wpdb->prepare( "DELETE FROM {$wpdb->usermeta} WHERE '_is_featured' = 1 AND '__marked_featured' < %d", ( time() - $interval ) );
+		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND meta_value < %d", '__marked_featured', ( time() - $interval ) );
+
+		$where_sql = $wpdb->prepare( "( meta_key=%s OR meta_key=%s )", '_is_featured', '__marked_featured' );
+
+		$query = "DELETE FROM {$wpdb->usermeta} WHERE {$where_sql} AND user_id IN ( $sub_query )";
 
 		$wpdb->query( $query );
 	}
