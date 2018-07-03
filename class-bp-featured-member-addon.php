@@ -99,3 +99,6 @@ class BP_Featured_Member_Addon {
 		$wpdb->query( $query );
 	}
 }
+
+BP_Featured_Member_Addon::get_instance();
+
