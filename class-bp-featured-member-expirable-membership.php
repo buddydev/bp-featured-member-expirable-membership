@@ -87,7 +87,7 @@ class BP_Featured_Member_Expirable_Membership{
 	 * @param int $user_id User id.
 	 */
 	public function save_date( $user_id ) {
-		update_user_meta( $user_id, '__marked_featured', time() );
+		update_user_meta( $user_id, '_bpfm_featured_at_time', time() );
 	}
 
 	/**
@@ -105,9 +105,9 @@ class BP_Featured_Member_Expirable_Membership{
 
 		$interval = apply_filters( 'bpfm_expiration_interval',  $this->get_interval() );
 
-		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND CAST( meta_value AS UNSIGNED ) < %d", '__marked_featured', ( time() - $interval ) );
+		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND CAST( meta_value AS UNSIGNED ) < %d", '_bpfm_featured_at_time', ( time() - $interval ) );
 
-		$where_sql = $wpdb->prepare( "( meta_key=%s OR meta_key=%s )", '_is_featured', '__marked_featured' );
+		$where_sql = $wpdb->prepare( "( meta_key=%s OR meta_key=%s )", '_is_featured', '_bpfm_featured_at_time' );
 
 		$query = "DELETE FROM {$wpdb->usermeta} WHERE {$where_sql} AND user_id IN ( $sub_query )";
 
