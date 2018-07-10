@@ -103,9 +103,9 @@ class BP_Featured_Member_Expirable_Membership{
 			return;
 		}
 
-		$interval = apply_filters( 'bp_fma_expiration_interval',  $this->get_interval() );
+		$interval = apply_filters( 'bpfm_expiration_interval',  $this->get_interval() );
 
-		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND meta_value < %d", '__marked_featured', ( time() - $interval ) );
+		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND CAST( meta_value AS UNSIGNED ) < %d", '__marked_featured', ( time() - $interval ) );
 
 		$where_sql = $wpdb->prepare( "( meta_key=%s OR meta_key=%s )", '_is_featured', '__marked_featured' );
 
