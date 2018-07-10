@@ -10,6 +10,8 @@
 
 /**
  * Class BP_Featured_Member_Addon
+ *
+ * @author Ravi Sharma
  */
 class BP_Featured_Member_Addon {
 
