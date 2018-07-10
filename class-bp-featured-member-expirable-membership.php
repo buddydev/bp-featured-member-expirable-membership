@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: BuddyPress Featured Member Addon
+ * Plugin Name: BuddyPress Featured Member Expirable Membership Addon
  * Description: An addon for featured member to unmark user as featured after certain period of time
  * Version: 1.0.0
  * Author: BuddyDev
@@ -9,16 +9,16 @@
  */
 
 /**
- * Class BP_Featured_Member_Addon
+ * Class BP_Featured_Member_Expirable_Membership
  *
  * @author Ravi Sharma
  */
-class BP_Featured_Member_Addon {
+class BP_Featured_Member_Expirable_Membership{
 
 	/**
 	 * Singleton Instance
 	 *
-	 * @var BP_Featured_Member_Addon
+	 * @var BP_Featured_Member_Expirable_Membership
 	 */
 	private static $instance = null;
 
@@ -32,7 +32,7 @@ class BP_Featured_Member_Addon {
 	/**
 	 * Get class instance
 	 *
-	 * @return BP_Featured_Member_Addon
+	 * @return BP_Featured_Member_Expirable_Membership
 	 */
 	public static function get_instance() {
 
@@ -73,6 +73,15 @@ class BP_Featured_Member_Addon {
 	}
 
 	/**
+	 * How much time to expire.
+	 *
+	 * @return int // seconds.
+	 */
+	private function get_interval() {
+		return 7 * DAY_IN_SECONDS;  // 7 days.
+	}
+
+	/**
 	 * Save datetime when a user marked as featured
 	 *
 	 * @param int $user_id User id.
@@ -94,7 +103,7 @@ class BP_Featured_Member_Addon {
 			return;
 		}
 
-		$interval = apply_filters( 'bp_fma_remove_interval', ( 7 * 24 * 60 * 60 ) );
+		$interval = apply_filters( 'bp_fma_expiration_interval',  $this->get_interval() );
 
 		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND meta_value < %d", '__marked_featured', ( time() - $interval ) );
 
@@ -106,5 +115,5 @@ class BP_Featured_Member_Addon {
 	}
 }
 
-BP_Featured_Member_Addon::get_instance();
+BP_Featured_Member_Expirable_Membership::get_instance();
 
