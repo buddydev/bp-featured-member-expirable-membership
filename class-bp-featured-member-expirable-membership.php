@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BuddyPress Featured Member Expirable Membership Addon
  * Description: An addon for featured member to unmark user as featured after certain period of time
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: BuddyDev
  *
  * @package bp-featured-member-addon
@@ -105,11 +105,19 @@ class BP_Featured_Member_Expirable_Membership{
 
 		$interval = apply_filters( 'bpfm_expiration_interval',  $this->get_interval() );
 
-		$sub_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND CAST( meta_value AS UNSIGNED ) < %d", '_bpfm_featured_at_time', ( time() - $interval ) );
+		$user_query = $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s  AND CAST( meta_value AS UNSIGNED ) < %d", '_bpfm_featured_at_time', ( time() - $interval ) );
 
 		$where_sql = $wpdb->prepare( "( meta_key=%s OR meta_key=%s )", '_is_featured', '_bpfm_featured_at_time' );
 
-		$query = "DELETE FROM {$wpdb->usermeta} WHERE {$where_sql} AND user_id IN ( $sub_query )";
+		$user_ids = $wpdb->get_col( $user_query );
+
+		if ( empty( $user_ids ) ) {
+			return;
+		}
+
+		$list = join( ',', $user_ids );
+
+		$query = "DELETE FROM {$wpdb->usermeta} WHERE {$where_sql} AND user_id IN ( $list )";
 
 		$wpdb->query( $query );
 	}
